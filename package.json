@@ -52,6 +52,7 @@
           "recharts": "^2.15.2",
           "sonner": "^2.0.3",
           "tailwind-merge": "*",
+          "tailwindcss": "*",
           "vaul": "^1.1.2",
           "vite": "*"
       },

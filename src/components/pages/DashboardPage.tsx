@@ -4,6 +4,7 @@ import { createClient } from "../../utils/supabase/client";
 import { projectId, publicAnonKey } from "../../utils/supabase/info";
 import { Prospect } from "../../utils/supabase/types";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
+import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Badge } from "../ui/badge";
@@ -19,7 +20,7 @@ import {
   AlertDialogTitle,
 } from "../ui/alert-dialog";
 import { Label } from "../ui/label";
-import { Search, Plus, FileText, Calendar, Building2, AlertTriangle, Database, Play, RefreshCw, ArrowLeft, Trash2 } from "lucide-react";
+import { Search, Plus, FileText, Calendar, Building2, AlertTriangle, Database, Play, RefreshCw, ArrowLeft, Trash2, ExternalLink, Lightbulb } from "lucide-react";
 import { toast } from "sonner@2.0.3";
 import { slugify, generateUniqueSlug } from "../../utils/slugify";
 
@@ -213,9 +214,34 @@ export function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+      {/* Top Navigation Bar */}
+      <div className="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 md:px-8 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Building2 className="w-6 h-6 text-blue-600" />
+              <span className="font-semibold">Yak Media - Prospect System</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Link to="/audit-guide">
+                <Button variant="ghost" size="sm">
+                  <FileText className="w-4 h-4 mr-2" />
+                  Audit Guide
+                </Button>
+              </Link>
+              <Link to="/manage-users">
+                <Button variant="ghost" size="sm">
+                  Manage Users
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div className="max-w-7xl mx-auto p-4 md:p-8">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="mb-2">Prospect Dashboard</h1>
             <p className="text-muted-foreground">
@@ -223,6 +249,27 @@ export function DashboardPage() {
             </p>
           </div>
         </div>
+
+        {/* Quick Start Guide */}
+        {prospects.length === 0 && (
+          <Alert className="mb-6 bg-blue-50 border-blue-200">
+            <Lightbulb className="w-4 h-4 text-blue-600" />
+            <AlertTitle>Welcome to Yak Media Prospecting System</AlertTitle>
+            <AlertDescription>
+              <div className="mt-2 space-y-2 text-sm">
+                <p>Get started by creating your first prospect, then:</p>
+                <ol className="list-decimal list-inside space-y-1 ml-2">
+                  <li>Click "Edit Audit" to fill out the 10-point marketing audit</li>
+                  <li>Click "View Public Report" to see the shareable report</li>
+                  <li>Share the public URL (success.yak.media/company-slug) with prospects</li>
+                </ol>
+                <p className="mt-3">
+                  Need help? Check the <Link to="/audit-guide" className="text-blue-600 hover:underline font-medium">Audit Guide</Link> for detailed instructions on completing audits.
+                </p>
+              </div>
+            </AlertDescription>
+          </Alert>
+        )}
 
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
@@ -452,21 +499,30 @@ export function DashboardPage() {
                     <p className="text-sm text-muted-foreground">{prospect.owner_name}</p>
                   )}
                   
-                  <div className="flex gap-2">
-                    <Link to={`/dashboard/audit/${prospect.id}`} className="flex-1">
-                      <Button className="w-full bg-blue-600 hover:bg-blue-700">
-                        <FileText className="w-4 h-4 mr-2" />
-                        Open Audit
+                  <div className="space-y-2">
+                    <div className="flex gap-2">
+                      <Link to={`/dashboard/audit/${prospect.id}`} className="flex-1">
+                        <Button className="w-full bg-blue-600 hover:bg-blue-700">
+                          <FileText className="w-4 h-4 mr-2" />
+                          Edit Audit
+                        </Button>
+                      </Link>
+                      <Button
+                        variant="destructive"
+                        size="icon"
+                        onClick={() => handleDeleteClick(prospect)}
+                        title="Delete prospect"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                    
+                    <Link to={`/${prospect.company_slug}`} className="block">
+                      <Button variant="outline" className="w-full">
+                        <ExternalLink className="w-4 h-4 mr-2" />
+                        View Public Report
                       </Button>
                     </Link>
-                    <Button
-                      variant="destructive"
-                      size="icon"
-                      onClick={() => handleDeleteClick(prospect)}
-                      title="Delete prospect"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
                   </div>
                   
                   {prospect.website && (
