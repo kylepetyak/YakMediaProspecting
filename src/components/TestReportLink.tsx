@@ -9,7 +9,7 @@ interface TestReportLinkProps {
 }
 
 export function TestReportLink({ companySlug, companyName }: TestReportLinkProps) {
-  const reportUrl = `https://success.yak.media/#/${companySlug}`;
+  const reportUrl = `https://success.yak.media/${companySlug}`;
   
   async function copyUrl() {
     try {

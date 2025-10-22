@@ -30,11 +30,11 @@ export default function App() {
           <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
           <Route path="/dashboard/audit/:prospectId" element={<ProtectedRoute><AuditFormPage /></ProtectedRoute>} />
           
-          {/* Public report routes - must be before HomePage to catch company slugs */}
-          <Route path="/:slug" element={<PublicReportPage />} />
+          {/* Home redirects to dashboard or login */}
+          <Route path="/" element={<Navigate to="/dashboard" replace />} />
           
-          {/* Home redirects to dashboard */}
-          <Route path="/" element={<ProtectedRoute><Navigate to="/dashboard" replace /></ProtectedRoute>} />
+          {/* Public report routes - must be after other routes to catch company slugs */}
+          <Route path="/:slug" element={<PublicReportPage />} />
         </Routes>
       </AuthProvider>
     </BrowserRouter>

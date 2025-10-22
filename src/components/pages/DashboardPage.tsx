@@ -83,7 +83,7 @@ export function DashboardPage() {
             duration: 3000
           });
           setTimeout(() => {
-            window.location.href = '/#/setup';
+            window.location.href = '/initial-setup';
           }, 1500);
           setLoading(false);
           return;
@@ -222,11 +222,6 @@ export function DashboardPage() {
               Manage chiropractor audits and generate public reports
             </p>
           </div>
-          <Link to="/">
-            <Button variant="outline">
-              ← Back to Home
-            </Button>
-          </Link>
         </div>
 
         {/* Stats */}

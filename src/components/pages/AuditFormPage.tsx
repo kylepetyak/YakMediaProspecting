@@ -113,7 +113,7 @@ export function AuditFormPage() {
         setCompletedBy(data.audit.completed_by || '');
       }
       
-      setPublicUrl(`https://success.yak.media/#/${data.prospect.company_slug}`);
+      setPublicUrl(`https://success.yak.media/${data.prospect.company_slug}`);
     } catch (error) {
       console.error('Error fetching prospect:', error);
       toast.error('Failed to load prospect data');
@@ -230,12 +230,12 @@ export function AuditFormPage() {
       
       if (!auditResponse.ok) throw new Error('Failed to save audit');
       
-      // Generate URL for custom domain with HashRouter
-      const generatedUrl = `https://success.yak.media/#/${prospect.company_slug}`;
+      // Generate URL for custom domain with clean URLs
+      const generatedUrl = `https://success.yak.media/${prospect.company_slug}`;
       setPublicUrl(generatedUrl);
       
       toast.success('Report published successfully! 🎉', {
-        description: `View at: success.yak.media/#/${prospect.company_slug}`,
+        description: `View at: success.yak.media/${prospect.company_slug}`,
         duration: 8000,
         action: {
           label: 'Open Report',
