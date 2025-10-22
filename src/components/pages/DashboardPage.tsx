@@ -245,7 +245,7 @@ export function DashboardPage() {
           <div>
             <h1 className="mb-2">Prospect Dashboard</h1>
             <p className="text-muted-foreground">
-              Manage chiropractor audits and generate public reports
+              Manage prospect audits and generate professional public reports
             </p>
           </div>
         </div>
@@ -289,10 +289,10 @@ export function DashboardPage() {
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-muted-foreground">Goal Progress</p>
-                  <div className="text-2xl">{prospects.length}/100</div>
+                  <p className="text-sm text-muted-foreground">60-Day Goal</p>
+                  <div className="text-2xl">25 Retainers</div>
                 </div>
-                <FileText className="w-8 h-8 text-purple-600" />
+                <FileText className="w-8 h-8 text-green-600" />
               </div>
             </CardContent>
           </Card>
@@ -301,10 +301,10 @@ export function DashboardPage() {
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-muted-foreground">Days Remaining</p>
-                  <div className="text-2xl">{Math.max(0, 10 - Math.floor(prospects.length / 10))}</div>
+                  <p className="text-sm text-muted-foreground">Daily Target</p>
+                  <div className="text-2xl">5-10 Audits</div>
                 </div>
-                <Calendar className="w-8 h-8 text-green-600" />
+                <Calendar className="w-8 h-8 text-purple-600" />
               </div>
             </CardContent>
           </Card>
@@ -330,7 +330,7 @@ export function DashboardPage() {
                   <DialogHeader>
                     <DialogTitle>Create New Prospect</DialogTitle>
                     <DialogDescription>
-                      Add a new chiropractor clinic to audit
+                      Add a new business to audit and win as a client
                     </DialogDescription>
                   </DialogHeader>
                   

@@ -261,8 +261,8 @@ export function AuditReport({ data }: AuditReportProps) {
             <TrendingUp className="w-12 h-12 mx-auto mb-4 text-green-400" />
             <h2 className="mb-3 text-white">Ready to Transform Your Marketing?</h2>
             <p className="mb-6 text-slate-300">
-              Yak Media specializes in helping chiropractors like you fill your schedule with qualified new patients. 
-              Let's discuss how we can implement these improvements and grow your practice.
+              Yak Media specializes in helping businesses like yours grow through strategic marketing. 
+              Let's discuss how we can implement these improvements and scale your business.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button size="lg" className="bg-green-600 hover:bg-green-700 text-white">
@@ -281,7 +281,7 @@ export function AuditReport({ data }: AuditReportProps) {
 
       {/* Footer */}
       <div className="text-center mt-8 text-sm text-muted-foreground">
-        <p>© 2025 Yak Media • Helping Chiropractors Grow Through Smart Marketing</p>
+        <p>© 2025 Yak Media • Strategic Marketing That Drives Real Growth</p>
       </div>
     </div>
   );

@@ -31,8 +31,8 @@ export function HomePage() {
           </h1>
           
           <p className="text-xl text-slate-600 mb-8 max-w-2xl mx-auto">
-            Perform comprehensive 10-point marketing audits for chiropractors and generate 
-            professional, shareable reports that showcase your expertise.
+            Perform comprehensive 10-point marketing audits for any business and generate 
+            professional, shareable reports that showcase your expertise and win retainer clients.
           </p>
 
           <div className="flex gap-4 justify-center">
@@ -53,23 +53,13 @@ export function HomePage() {
 
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
-          <Card className="border-blue-200 bg-white/50 backdrop-blur">
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-between mb-2">
-                <Target className="w-8 h-8 text-blue-600" />
-                <span className="text-3xl">100</span>
-              </div>
-              <p className="text-slate-600">Prospect Goal (10 days)</p>
-            </CardContent>
-          </Card>
-
           <Card className="border-green-200 bg-white/50 backdrop-blur">
             <CardContent className="pt-6">
               <div className="flex items-center justify-between mb-2">
                 <TrendingUp className="w-8 h-8 text-green-600" />
                 <span className="text-3xl">25</span>
               </div>
-              <p className="text-slate-600">Target Retainer Clients</p>
+              <p className="text-slate-600">Retainer Clients (60 Day Goal)</p>
             </CardContent>
           </Card>
 
@@ -79,7 +69,17 @@ export function HomePage() {
                 <Zap className="w-8 h-8 text-purple-600" />
                 <span className="text-3xl">5-10</span>
               </div>
-              <p className="text-slate-600">Daily Audits</p>
+              <p className="text-slate-600">Daily Audits Target</p>
+            </CardContent>
+          </Card>
+
+          <Card className="border-blue-200 bg-white/50 backdrop-blur">
+            <CardContent className="pt-6">
+              <div className="flex items-center justify-between mb-2">
+                <Target className="w-8 h-8 text-blue-600" />
+                <span className="text-3xl">300+</span>
+              </div>
+              <p className="text-slate-600">Total Audits (60 Days)</p>
             </CardContent>
           </Card>
         </div>
@@ -215,10 +215,10 @@ export function HomePage() {
 
         {/* CTA */}
         <div className="text-center bg-gradient-to-br from-blue-600 to-blue-700 text-white rounded-2xl p-12">
-          <h2 className="text-white mb-4">Ready to Start Prospecting?</h2>
+          <h2 className="text-white mb-4">Ready to Win 25 Retainer Clients?</h2>
           <p className="text-blue-100 text-lg mb-8 max-w-2xl mx-auto">
             Jump into the dashboard and create your first prospect, or review the audit 
-            guide to understand the complete system.
+            guide to understand the complete system. Your 60-day journey starts now.
           </p>
           <div className="flex gap-4 justify-center">
             <Link to="/dashboard">
