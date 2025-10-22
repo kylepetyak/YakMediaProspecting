@@ -4,7 +4,6 @@ import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "./ui/accordion";
 import { Separator } from "./ui/separator";
-import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
 import { 
   ArrowLeft,
   ClipboardCheck,
@@ -23,8 +22,7 @@ import {
   BarChart,
   Zap,
   MessageSquare,
-  TrendingUp,
-  Database
+  TrendingUp
 } from "lucide-react";
 
 export function AuditGuide() {
@@ -99,7 +97,7 @@ export function AuditGuide() {
       description: "Search and display advertising presence",
       whatToLookFor: [
         "Are they running Google Search ads? (Check Ad Transparency)",
-        "Search their business name + industry keyword in Google",
+        "Search their business name + 'chiropractor' in Google",
         "Do they appear in ads for competitor searches?",
         "Display/banner ads running?",
         "Ad copy quality and relevance",
@@ -248,7 +246,7 @@ export function AuditGuide() {
       {/* Navigation */}
       <div className="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
         <div className="max-w-6xl mx-auto px-4 py-4">
-          <Link to="/dashboard">
+          <Link to="/">
             <Button
               variant="ghost"
               className="gap-2"
@@ -269,21 +267,10 @@ export function AuditGuide() {
           </div>
           <h1 className="mb-3">10-Point Marketing Audit Guide</h1>
           <p className="text-muted-foreground">
-            Follow this step-by-step guide to conduct thorough marketing audits for any business. 
+            Follow this step-by-step guide to conduct thorough marketing audits for Arizona chiropractors. 
             Each audit should take 10-15 minutes.
           </p>
         </div>
-
-        {/* Important Note */}
-        <Alert className="mb-8 bg-blue-50 border-blue-200">
-          <Database className="w-4 h-4 text-blue-600" />
-          <AlertTitle>Everything Lives in the Dashboard</AlertTitle>
-          <AlertDescription>
-            All prospect information, audit scores, notes, and screenshots are managed directly in the dashboard. 
-            No Google Sheets or Drive needed - the system handles everything automatically and generates 
-            professional public reports at success.yak.media/company-slug.
-          </AlertDescription>
-        </Alert>
 
         {/* Quick Reference */}
         <Card className="mb-8 border-green-200 bg-green-50/50">
@@ -298,30 +285,30 @@ export function AuditGuide() {
               <div className="bg-white p-4 rounded-lg border border-green-200">
                 <div className="flex items-center gap-2 mb-2">
                   <div className="flex items-center justify-center w-6 h-6 rounded-full bg-green-600 text-white text-sm">1</div>
-                  <h4>Create Prospect</h4>
+                  <h4>Gather Contact Info</h4>
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  Add business to dashboard with contact info, website, and social handles
+                  Find business name, owner, email, phone, website, social handles, and GMB link
                 </p>
               </div>
 
               <div className="bg-white p-4 rounded-lg border border-green-200">
                 <div className="flex items-center gap-2 mb-2">
                   <div className="flex items-center justify-center w-6 h-6 rounded-full bg-green-600 text-white text-sm">2</div>
-                  <h4>Complete Audit</h4>
+                  <h4>Audit 10 Points</h4>
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  Score all 10 categories, add notes, and upload screenshots in the audit form
+                  Go through each category, take screenshots, and score each area
                 </p>
               </div>
 
               <div className="bg-white p-4 rounded-lg border border-green-200">
                 <div className="flex items-center gap-2 mb-2">
                   <div className="flex items-center justify-center w-6 h-6 rounded-full bg-green-600 text-white text-sm">3</div>
-                  <h4>Share Report</h4>
+                  <h4>Document & Upload</h4>
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  System auto-generates public report URL - click "View Public Report" and share with prospect
+                  Add scores, notes, and screenshots to Google Sheet and Drive
                 </p>
               </div>
             </div>
@@ -502,7 +489,7 @@ export function AuditGuide() {
               Step 1: Lead Identification
             </CardTitle>
             <CardDescription>
-              Finding and gathering contact information for potential clients
+              Finding and gathering contact information for Arizona chiropractors
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -557,7 +544,7 @@ export function AuditGuide() {
                   Email Verification
                 </h4>
                 <p className="text-sm text-muted-foreground mb-2">
-                  Use Hunter.io or NeverBounce to verify email addresses before adding to the dashboard.
+                  Use Hunter.io or NeverBounce to verify email addresses before adding to the sheet.
                   Invalid emails waste time and hurt deliverability.
                 </p>
                 <Badge variant="outline" className="text-xs">Required Step</Badge>
@@ -573,8 +560,8 @@ export function AuditGuide() {
                 <ul className="text-sm text-amber-800 space-y-1">
                   <li>• Businesses that look inactive or permanently closed</li>
                   <li>• Spammy or low-quality websites</li>
-                  <li>• Businesses outside your target market/region</li>
-                  <li>• Corporate chains (focus on independent businesses)</li>
+                  <li>• Businesses outside of Arizona</li>
+                  <li>• Corporate chains (focus on independent clinics)</li>
                 </ul>
               </div>
             </div>
@@ -604,7 +591,7 @@ export function AuditGuide() {
               </div>
               <div className="flex items-start gap-3 text-sm">
                 <CheckCircle2 className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
-                <span>Screenshots uploaded directly in the dashboard audit form</span>
+                <span>Screenshots uploaded to Google Drive with clear labels (Business-Name-Category.png)</span>
               </div>
               <div className="flex items-start gap-3 text-sm">
                 <CheckCircle2 className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
@@ -620,7 +607,7 @@ export function AuditGuide() {
               </div>
               <div className="flex items-start gap-3 text-sm">
                 <CheckCircle2 className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
-                <span>All audit fields completed in the dashboard (no blank fields)</span>
+                <span>Google Sheet row fully completed with no blank cells</span>
               </div>
             </div>
           </CardContent>

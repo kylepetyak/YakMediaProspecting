@@ -40,10 +40,7 @@ app.get("/make-server-5e752b5e/prospects", async (c) => {
     return c.json({ prospects: data || [] });
   } catch (error) {
     console.error('Error fetching prospects:', error);
-    return c.json({ 
-      error: error instanceof Error ? error.message : 'Failed to fetch prospects',
-      details: error 
-    }, 500);
+    return c.json({ error: String(error) }, 500);
   }
 });
 
@@ -51,6 +48,7 @@ app.get("/make-server-5e752b5e/prospects", async (c) => {
 app.get("/make-server-5e752b5e/prospects/slug/:slug", async (c) => {
   try {
     const slug = c.req.param('slug');
+    console.log('Looking for prospect with slug:', slug);
     
     const { data: prospect, error: prospectError } = await supabase
       .from('prospects')
@@ -58,33 +56,45 @@ app.get("/make-server-5e752b5e/prospects/slug/:slug", async (c) => {
       .eq('company_slug', slug)
       .single();
     
-    // Handle case where prospect doesn't exist (PGRST116 error)
-    if (prospectError && prospectError.code === 'PGRST116') {
+    if (prospectError) {
+      console.error('Prospect error:', prospectError);
       return c.json({ 
-        error: 'Prospect not found',
-        message: `No prospect found with slug: ${slug}. Create this prospect in your dashboard first.`
+        error: 'Prospect not found', 
+        message: prospectError.message,
+        details: prospectError.details,
+        hint: prospectError.hint,
+        code: prospectError.code
       }, 404);
     }
     
-    if (prospectError) throw prospectError;
     if (!prospect) {
-      return c.json({ error: 'Prospect not found' }, 404);
+      return c.json({ error: 'Prospect not found', message: `No prospect with slug "${slug}"` }, 404);
     }
     
-    // Get latest audit (might not exist yet)
-    const { data: audit } = await supabase
+    console.log('Found prospect:', prospect.id);
+    
+    // Get latest audit
+    const { data: audit, error: auditError } = await supabase
       .from('audits')
       .select('*')
       .eq('prospect_id', prospect.id)
       .order('completed_at', { ascending: false })
       .limit(1)
-      .maybeSingle();
+      .single();
+    
+    if (auditError && auditError.code !== 'PGRST116') {
+      console.error('Audit error:', auditError);
+    }
     
     // Get assets
-    const { data: assets } = await supabase
+    const { data: assets, error: assetsError } = await supabase
       .from('assets')
       .select('*')
       .eq('prospect_id', prospect.id);
+    
+    if (assetsError) {
+      console.error('Assets error:', assetsError);
+    }
     
     return c.json({ 
       prospect, 
@@ -93,9 +103,11 @@ app.get("/make-server-5e752b5e/prospects/slug/:slug", async (c) => {
     });
   } catch (error) {
     console.error('Error fetching prospect by slug:', error);
+    const errorMessage = error instanceof Error ? error.message : String(error);
     return c.json({ 
-      error: error instanceof Error ? error.message : 'Failed to fetch prospect',
-      details: error 
+      error: 'Server error', 
+      message: errorMessage,
+      stack: error instanceof Error ? error.stack : undefined
     }, 500);
   }
 });
@@ -111,24 +123,16 @@ app.get("/make-server-5e752b5e/prospects/:id", async (c) => {
       .eq('id', id)
       .single();
     
-    // Handle case where prospect doesn't exist
-    if (prospectError && prospectError.code === 'PGRST116') {
-      return c.json({ 
-        error: 'Prospect not found',
-        message: `No prospect found with ID: ${id}`
-      }, 404);
-    }
-    
     if (prospectError) throw prospectError;
     
-    // Get latest audit (might not exist yet)
+    // Get latest audit
     const { data: audit } = await supabase
       .from('audits')
       .select('*')
       .eq('prospect_id', id)
       .order('completed_at', { ascending: false })
       .limit(1)
-      .maybeSingle();
+      .single();
     
     // Get assets
     const { data: assets } = await supabase
@@ -143,10 +147,7 @@ app.get("/make-server-5e752b5e/prospects/:id", async (c) => {
     });
   } catch (error) {
     console.error('Error fetching prospect:', error);
-    return c.json({ 
-      error: error instanceof Error ? error.message : 'Failed to fetch prospect',
-      details: error 
-    }, 500);
+    return c.json({ error: String(error) }, 500);
   }
 });
 
@@ -181,10 +182,7 @@ app.post("/make-server-5e752b5e/prospects", async (c) => {
     return c.json({ prospect: data });
   } catch (error) {
     console.error('Error creating prospect:', error);
-    return c.json({ 
-      error: error instanceof Error ? error.message : 'Failed to create prospect',
-      details: error 
-    }, 500);
+    return c.json({ error: String(error) }, 500);
   }
 });
 
@@ -205,10 +203,7 @@ app.put("/make-server-5e752b5e/prospects/:id", async (c) => {
     return c.json({ prospect: data });
   } catch (error) {
     console.error('Error updating prospect:', error);
-    return c.json({ 
-      error: error instanceof Error ? error.message : 'Failed to update prospect',
-      details: error 
-    }, 500);
+    return c.json({ error: String(error) }, 500);
   }
 });
 
@@ -252,10 +247,7 @@ app.post("/make-server-5e752b5e/audits", async (c) => {
     return c.json({ audit: result });
   } catch (error) {
     console.error('Error saving audit:', error);
-    return c.json({ 
-      error: error instanceof Error ? error.message : 'Failed to save audit',
-      details: error 
-    }, 500);
+    return c.json({ error: String(error) }, 500);
   }
 });
 
@@ -311,10 +303,7 @@ app.post("/make-server-5e752b5e/upload", async (c) => {
     return c.json({ asset, url: publicUrl });
   } catch (error) {
     console.error('Error uploading file:', error);
-    return c.json({ 
-      error: error instanceof Error ? error.message : 'Failed to upload file',
-      details: error 
-    }, 500);
+    return c.json({ error: String(error) }, 500);
   }
 });
 
@@ -349,214 +338,7 @@ app.delete("/make-server-5e752b5e/assets/:id", async (c) => {
     return c.json({ success: true });
   } catch (error) {
     console.error('Error deleting asset:', error);
-    return c.json({ 
-      error: error instanceof Error ? error.message : 'Failed to delete asset',
-      details: error 
-    }, 500);
-  }
-});
-
-// Delete prospect and all related data
-app.delete("/make-server-5e752b5e/prospects/:id", async (c) => {
-  try {
-    const id = c.req.param('id');
-    
-    // Get prospect details before deletion
-    const { data: prospect } = await supabase
-      .from('prospects')
-      .select('*')
-      .eq('id', id)
-      .single();
-    
-    if (!prospect) {
-      return c.json({ error: 'Prospect not found' }, 404);
-    }
-    
-    // Delete all related assets from storage and database
-    const { data: assets } = await supabase
-      .from('assets')
-      .select('*')
-      .eq('prospect_id', id);
-    
-    if (assets && assets.length > 0) {
-      // Delete files from storage
-      for (const asset of assets) {
-        const urlParts = asset.url.split('/screens/');
-        if (urlParts.length > 1) {
-          const filePath = urlParts[1];
-          await supabase.storage.from('screens').remove([filePath]);
-        }
-      }
-      
-      // Delete asset records
-      await supabase.from('assets').delete().eq('prospect_id', id);
-    }
-    
-    // Delete audits
-    await supabase.from('audits').delete().eq('prospect_id', id);
-    
-    // Delete prospect
-    const { error } = await supabase
-      .from('prospects')
-      .delete()
-      .eq('id', id);
-    
-    if (error) throw error;
-    
-    console.log(`Deleted prospect ${id} (${prospect.company_name}) and all related data`);
-    
-    return c.json({ 
-      success: true,
-      message: 'Prospect deleted successfully',
-      deletedProspect: prospect 
-    });
-  } catch (error) {
-    console.error('Error deleting prospect:', error);
-    return c.json({ 
-      error: error instanceof Error ? error.message : 'Failed to delete prospect',
-      details: error 
-    }, 500);
-  }
-});
-
-// Create user account (admin only - call this manually or through a protected route)
-app.post("/make-server-5e752b5e/auth/create-user", async (c) => {
-  try {
-    const body = await c.req.json();
-    const { email, password, name } = body;
-    
-    if (!email || !password) {
-      return c.json({ error: 'Email and password are required' }, 400);
-    }
-    
-    // Create user with Supabase Admin API
-    const { data, error } = await supabase.auth.admin.createUser({
-      email,
-      password,
-      user_metadata: { name: name || '' },
-      // Automatically confirm the user's email since an email server hasn't been configured
-      email_confirm: true
-    });
-    
-    if (error) {
-      console.error('Error creating user:', error);
-      throw error;
-    }
-    
-    console.log(`Created user account for: ${email}`);
-    
-    return c.json({ 
-      success: true, 
-      message: 'User created successfully',
-      user: { id: data.user.id, email: data.user.email }
-    });
-  } catch (error) {
-    console.error('Error creating user:', error);
-    return c.json({ 
-      error: error instanceof Error ? error.message : 'Failed to create user',
-      details: error 
-    }, 500);
-  }
-});
-
-// Get all users (admin only)
-app.get("/make-server-5e752b5e/auth/users", async (c) => {
-  try {
-    const { data, error } = await supabase.auth.admin.listUsers();
-
-    if (error) {
-      console.error('Error listing users:', error);
-      return c.json({ error: error.message }, 400);
-    }
-
-    const users = data.users.map(user => ({
-      id: user.id,
-      email: user.email,
-      name: user.user_metadata?.name || '',
-      created_at: user.created_at,
-      last_sign_in_at: user.last_sign_in_at,
-    }));
-
-    return c.json({ users });
-  } catch (error: any) {
-    console.error('Server error listing users:', error);
-    return c.json({ 
-      error: error?.message || 'Failed to list users',
-      details: error 
-    }, 500);
-  }
-});
-
-// Update user (admin only)
-app.patch("/make-server-5e752b5e/auth/users/:id", async (c) => {
-  try {
-    const id = c.req.param('id');
-    const { email, name, password } = await c.req.json();
-
-    const updateData: any = {
-      user_metadata: { name: name || '' }
-    };
-
-    if (email) {
-      updateData.email = email;
-    }
-
-    if (password && password.length > 0) {
-      updateData.password = password;
-    }
-
-    const { data, error } = await supabase.auth.admin.updateUserById(id, updateData);
-
-    if (error) {
-      console.error('Error updating user:', error);
-      return c.json({ error: error.message }, 400);
-    }
-
-    console.log(`Updated user ${email || data.user.email}`);
-    
-    return c.json({ 
-      success: true,
-      user: {
-        id: data.user.id,
-        email: data.user.email,
-        name: data.user.user_metadata?.name || '',
-        created_at: data.user.created_at,
-        last_sign_in_at: data.user.last_sign_in_at,
-      }
-    });
-  } catch (error: any) {
-    console.error('Server error updating user:', error);
-    return c.json({ 
-      error: error?.message || 'Failed to update user',
-      details: error 
-    }, 500);
-  }
-});
-
-// Delete user (admin only)
-app.delete("/make-server-5e752b5e/auth/users/:id", async (c) => {
-  try {
-    const id = c.req.param('id');
-
-    // Get user info before deletion for logging
-    const { data: userData } = await supabase.auth.admin.getUserById(id);
-    
-    const { error } = await supabase.auth.admin.deleteUser(id);
-
-    if (error) {
-      console.error('Error deleting user:', error);
-      return c.json({ error: error.message }, 400);
-    }
-
-    console.log(`Deleted user ${userData?.user?.email || id}`);
-    
-    return c.json({ success: true });
-  } catch (error: any) {
-    console.error('Server error deleting user:', error);
-    return c.json({ 
-      error: error?.message || 'Failed to delete user',
-      details: error 
-    }, 500);
+    return c.json({ error: String(error) }, 500);
   }
 });
 

@@ -230,7 +230,7 @@ export function AuditFormPage() {
       
       if (!auditResponse.ok) throw new Error('Failed to save audit');
       
-      // Generate URL for custom domain with clean URLs
+      // Generate URL for custom domain
       const generatedUrl = `https://success.yak.media/${prospect.company_slug}`;
       setPublicUrl(generatedUrl);
       

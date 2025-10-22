@@ -1,366 +1,235 @@
-# Vercel Deployment Guide
+# Vercel Deployment Guide for Yak Media Lead Prospecting
 
-## The Problem You're Seeing
+This guide will help you deploy your lead prospecting app to Vercel with custom domain support.
 
-```
-Error: No Output Directory named "dist" found after the Build completed.
-```
+## Prerequisites
 
-This means the build failed BEFORE creating the `dist` folder.
+1. GitHub account with your code pushed to a repository
+2. Vercel account (sign up at vercel.com)
+3. Custom domain access (yak.media and success.yak.media)
+4. Supabase project set up and running
 
----
-
-## Root Causes
-
-### 1. The `_redirects` File is Still a Directory
-
-In your GitHub repo, `public/_redirects` is still a **directory** with `.tsx` files instead of a plain text file.
-
-**This must be fixed in your local repo** - it cannot be fixed in Figma Make.
-
-### 2. Missing or Incorrect Build Configuration
-
-Vercel might not be detecting the correct build settings.
-
----
-
-## Fix It Step-by-Step
-
-### Step 1: Fix `_redirects` in Your Local Repo
-
-**You MUST do this on your computer, not in Figma Make.**
-
-Open terminal in your project folder:
+## Step 1: Push Code to GitHub
 
 ```bash
-# Navigate to public directory
-cd public
-
-# Delete the bad directory
-rm -rf _redirects
-
-# For Vercel, you actually don't need _redirects
-# (vercel.json handles routing instead)
-# So just leave it deleted
-
-# Go back to project root
-cd ..
+git init
+git add .
+git commit -m "Initial commit - Yak Media Lead Prospecting System"
+git branch -M main
+git remote add origin https://github.com/YOUR-USERNAME/yak-media-prospecting.git
+git push -u origin main
 ```
 
----
+## Step 2: Deploy to Vercel
 
-### Step 2: Verify Your `package.json` Exists
+### Option A: Deploy via Vercel Dashboard
 
-Check if you have a `package.json` file in your project root:
+1. Go to [vercel.com](https://vercel.com) and sign in
+2. Click "Add New Project"
+3. Import your GitHub repository
+4. Configure the project:
+   - **Framework Preset**: Vite
+   - **Build Command**: `npm run build`
+   - **Output Directory**: `dist`
+   - **Install Command**: `npm install`
+
+### Option B: Deploy via Vercel CLI
 
 ```bash
-ls -la package.json
+npm install -g vercel
+vercel login
+vercel
 ```
 
-**If it doesn't exist**, create it:
+Follow the prompts to link your project.
 
-```json
-{
-  "name": "yak-media-prospecting",
-  "version": "1.0.0",
-  "type": "module",
-  "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
-  },
-  "dependencies": {
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-router-dom": "^6.22.0",
-    "@supabase/supabase-js": "^2.39.3",
-    "recharts": "^2.12.0",
-    "lucide-react": "^0.344.0",
-    "sonner": "^1.4.0",
-    "motion": "^11.0.0"
-  },
-  "devDependencies": {
-    "@types/react": "^18.2.55",
-    "@types/react-dom": "^18.2.19",
-    "@vitejs/plugin-react": "^4.2.1",
-    "vite": "^5.1.0",
-    "tailwindcss": "^4.0.0",
-    "typescript": "^5.3.3"
-  }
-}
+## Step 3: Configure Environment Variables
+
+In your Vercel project dashboard:
+
+1. Go to **Settings** → **Environment Variables**
+2. Add the following variables:
+
+```
+VITE_SUPABASE_PROJECT_ID=vgttzxgulpgxoysogpfs
+VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ```
 
----
+Get these values from your Supabase project settings:
+- Go to https://supabase.com/dashboard/project/vgttzxgulpgxoysogpfs/settings/api
+- Copy the "Project URL" (extract the project ID)
+- Copy the "anon public" API key
 
-### Step 3: Verify Your `vite.config.ts` Exists
+3. Click **Save** for each variable
+4. Redeploy your project for changes to take effect
 
-Check if you have `vite.config.ts`:
+## Step 4: Configure Custom Domains
+
+### Main Domain (yak.media or app.yak.media)
+
+1. In Vercel Dashboard → **Settings** → **Domains**
+2. Add your primary domain (e.g., `app.yak.media`)
+3. Follow Vercel's DNS instructions:
+   - Add a CNAME record: `app` → `cname.vercel-dns.com`
+   - Or add A records to your DNS provider
+
+### Success Subdomain (success.yak.media)
+
+1. In the same **Domains** section
+2. Click **Add Domain**
+3. Enter `success.yak.media`
+4. Add DNS records:
+   - CNAME: `success` → `cname.vercel-dns.com`
+
+**Important**: Both domains should point to the **same Vercel project**. The app uses JavaScript to detect which subdomain is being accessed and shows the appropriate content.
+
+### DNS Configuration Example
+
+In your DNS provider (e.g., Cloudflare, GoDaddy, Namecheap):
+
+```
+Type    Name       Value
+----    ----       -----
+CNAME   app        cname.vercel-dns.com
+CNAME   success    cname.vercel-dns.com
+```
+
+## Step 5: Verify Deployment
+
+1. **Main App**: Visit `https://app.yak.media` (or your chosen domain)
+   - Should show the HomePage
+   - Navigate to `/dashboard`, `/guide`, etc.
+
+2. **Public Reports**: Visit `https://success.yak.media/companyname`
+   - Should show the PublicReportPage
+   - Test with: `https://success.yak.media/test`
+
+3. **Check Logs**: In Vercel Dashboard → **Deployments** → Click deployment → **Functions** tab
+   - Monitor for any errors
+
+## Step 6: Supabase Configuration
+
+Your Supabase edge functions are separate from Vercel. They continue to run on Supabase infrastructure.
+
+1. Ensure your database is set up (run `DATABASE_SETUP.sql`)
+2. Deploy your edge functions:
 
 ```bash
-ls -la vite.config.ts
+cd supabase
+supabase functions deploy make-server-5e752b5e
 ```
 
-**If it doesn't exist**, create it:
+3. Test the connection:
+   - Visit `/setup` on your deployed app
+   - It will check the database connection
 
-```typescript
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import path from 'path'
+## Step 7: Set Up CORS (if needed)
 
-export default defineConfig({
-  plugins: [react()],
-  resolve: {
-    alias: {
-      '@': path.resolve(__dirname, './'),
-    },
-  },
-})
-```
+If you encounter CORS issues between Vercel and Supabase:
 
----
+1. Go to Supabase Dashboard → **Settings** → **API**
+2. Add your Vercel domains to allowed origins:
+   - `https://app.yak.media`
+   - `https://success.yak.media`
 
-### Step 4: Add `vercel.json` (Already Created)
+## Common Issues
 
-I've created a `vercel.json` file for you in Figma Make. Download it with your code.
+### Issue: "Module not found" errors
+**Solution**: Ensure all imports use the correct paths. Vite uses `/` as the root.
 
-It contains:
-```json
-{
-  "buildCommand": "npm install && npm run build",
-  "outputDirectory": "dist",
-  "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
-    }
-  ]
-}
-```
+### Issue: 404 on page refresh
+**Solution**: The `vercel.json` rewrites configuration handles this. Make sure it's committed.
 
-This tells Vercel:
-- How to build your app
-- Where to find the built files
-- How to handle routing (for clean URLs)
+### Issue: Environment variables not working
+**Solution**: 
+- Ensure they're prefixed with `VITE_`
+- Redeploy after adding variables
+- Check logs in Vercel Dashboard
 
----
+### Issue: Subdomain not routing correctly
+**Solution**: 
+- Verify DNS records are pointing to Vercel
+- Wait up to 48 hours for DNS propagation
+- Check that both domains are added in Vercel Settings
 
-### Step 5: Commit and Push
+### Issue: Supabase connection fails
+**Solution**:
+- Verify environment variables are set correctly
+- Check Supabase project is not paused
+- Test connection from `/setup` page
+
+## Performance Optimization
+
+Your build is already optimized with:
+- Code splitting (React, UI libraries, Supabase chunked separately)
+- Tree shaking
+- Minification
+- No sourcemaps in production
+
+## Monitoring
+
+1. **Vercel Analytics**: Enable in Settings → Analytics
+2. **Error Tracking**: Check Functions → Runtime Logs
+3. **Supabase Logs**: Check Supabase Dashboard → Logs
+
+## Updating the App
+
+After making changes:
 
 ```bash
-# Remove the bad _redirects directory (if you haven't already)
-git rm -rf public/_redirects
-
-# Add vercel.json
-git add vercel.json
-
-# Commit
-git commit -m "Add Vercel config and remove broken _redirects"
-
-# Push
+git add .
+git commit -m "Your update message"
 git push
 ```
 
----
+Vercel will automatically deploy the new version.
 
-### Step 6: Configure Vercel
+## Rollback
 
-1. **Go to [vercel.com](https://vercel.com)** and sign in
-2. **Import your GitHub repository**
-3. **Vercel should auto-detect** the settings from `vercel.json`
-4. **Add environment variables**:
-   - `VITE_SUPABASE_URL` = your Supabase project URL
-   - `VITE_SUPABASE_ANON_KEY` = your Supabase anon key
+If something goes wrong:
 
-5. **Deploy!**
+1. Go to Vercel Dashboard → **Deployments**
+2. Find a working deployment
+3. Click "..." → **Promote to Production**
 
----
+## Local Development
 
-### Step 7: Add Custom Domain
-
-1. In Vercel dashboard, go to **Settings** → **Domains**
-2. Add `success.yak.media`
-3. Vercel will give you DNS records
-4. Add them to GoDaddy:
-   ```
-   Type: CNAME
-   Name: success
-   Value: cname.vercel-dns.com
-   ```
-5. Wait 5-30 minutes for DNS propagation
-
----
-
-## Vercel vs Netlify
-
-Both work the same way, but configuration is different:
-
-| Feature | Netlify | Vercel |
-|---------|---------|--------|
-| Routing config | `public/_redirects` file | `vercel.json` file |
-| Auto-detection | Good | Better |
-| Environment vars | Site settings | Project settings |
-| Custom domains | Easy | Easy |
-
-**For this project, Vercel is actually easier** because `vercel.json` handles routing configuration and is a proper JSON file (not a plain text file that Figma Make doesn't support).
-
----
-
-## Common Vercel Errors
-
-### Error: "No Output Directory named 'dist' found"
-
-**Causes:**
-- Build failed before creating `dist`
-- Wrong build command
-- Missing dependencies
-
-**Solutions:**
-1. Check the **full build logs** in Vercel (scroll to the top)
-2. Look for the FIRST error (usually about missing packages)
-3. Make sure `package.json` has all dependencies
-4. Make sure `vite.config.ts` exists
-
----
-
-### Error: "Module not found"
-
-**Causes:**
-- Missing package in `package.json`
-- Wrong import path
-
-**Solutions:**
-1. Add the missing package to `package.json`
-2. Run `npm install` locally to test
-3. Push `package-lock.json` to GitHub
-
----
-
-### Error: "Routes return 404"
-
-**Causes:**
-- `vercel.json` rewrites not working
-- Missing `vercel.json`
-
-**Solutions:**
-1. Make sure `vercel.json` exists in project root
-2. Make sure it has the `rewrites` configuration
-3. Redeploy after adding `vercel.json`
-
----
-
-## Debugging Your Build
-
-### View Full Build Logs
-
-1. Go to Vercel dashboard
-2. Click on your deployment
-3. Click **Build Logs**
-4. **Scroll to the top** to see the first error
-
-### Common Build Log Errors
+To test locally with production environment variables:
 
 ```bash
-# Missing package.json
-Error: Cannot find package.json
-→ Create package.json in project root
+# Create .env.local file
+cp .env.example .env.local
 
-# Missing vite
-Error: Cannot find module 'vite'
-→ Add vite to devDependencies in package.json
+# Add your values
+echo "VITE_SUPABASE_PROJECT_ID=vgttzxgulpgxoysogpfs" >> .env.local
+echo "VITE_SUPABASE_ANON_KEY=your-key-here" >> .env.local
 
-# Build command failed
-Error: vite build failed
-→ Check for syntax errors in your code
-→ Look at the specific error message above this
-
-# Missing environment variable
-Warning: VITE_SUPABASE_URL is undefined
-→ Add environment variables in Vercel project settings
+# Run dev server
+npm run dev
 ```
 
----
+## Security Checklist
 
-## Test Locally First
+- ✅ Environment variables are set in Vercel (not hardcoded)
+- ✅ SUPABASE_SERVICE_ROLE_KEY is ONLY on the server (Supabase Edge Functions)
+- ✅ Public routes (success.yak.media) don't require auth
+- ✅ Admin routes will require auth (to be implemented)
+- ✅ HTTPS enforced by Vercel automatically
 
-Before deploying, test the build locally:
+## Next Steps
 
-```bash
-# Install dependencies
-npm install
-
-# Build the project
-npm run build
-
-# Check if dist folder was created
-ls -la dist/
-
-# Preview the built app
-npm run preview
-```
-
-If this works locally, it should work on Vercel.
+1. ✅ Deploy to Vercel
+2. ✅ Configure domains
+3. ✅ Set environment variables
+4. ⏳ Run database setup (DATABASE_SETUP.sql in Supabase SQL Editor)
+5. ⏳ Create your first prospect and audit
+6. ⏳ Test public report URL
+7. ⏳ Set up authentication for admin pages
+8. ⏳ Monitor usage and performance
 
 ---
 
-## Your Build Checklist
-
-Before deploying to Vercel, verify:
-
-- [ ] `public/_redirects` is deleted (not needed for Vercel)
-- [ ] `vercel.json` exists in project root
-- [ ] `package.json` exists with correct dependencies
-- [ ] `vite.config.ts` exists
-- [ ] Local build succeeds (`npm run build`)
-- [ ] Environment variables are set in Vercel
-- [ ] Code is pushed to GitHub
-
----
-
-## After Successful Deployment
-
-Once your build succeeds:
-
-1. ✅ Your site is live at `your-project.vercel.app`
-2. ✅ Test the routes:
-   - `/login` - login page
-   - `/dashboard` - dashboard (protected)
-   - `/initial-setup` - first user setup
-   - `/test-company` - public report (after creating it)
-3. ✅ Add custom domain `success.yak.media`
-4. ✅ Test custom domain works
-5. ✅ Start prospecting!
-
----
-
-## Need More Help?
-
-If the build still fails:
-
-1. **Copy the FULL build logs** from Vercel (scroll to the very top)
-2. Look for the FIRST error message
-3. The error at the bottom ("dist not found") is just the result, not the cause
-
-The actual error will be in the middle of the logs, usually showing:
-- Missing package
-- Syntax error in code
-- Missing configuration file
-- Wrong import path
-
----
-
-## Summary
-
-**Vercel is actually BETTER for your project** than Netlify because:
-- ✅ No need for plain text `_redirects` file
-- ✅ `vercel.json` handles routing (proper JSON file)
-- ✅ Better auto-detection
-- ✅ Easier configuration
-
-**Steps to success:**
-1. Delete `public/_redirects` directory in your local repo
-2. Make sure `package.json` and `vite.config.ts` exist
-3. Make sure `vercel.json` exists (I created it for you)
-4. Push to GitHub
-5. Deploy to Vercel
-6. Add environment variables
-7. Done!
+**Need Help?**
+- Vercel Docs: https://vercel.com/docs
+- Supabase Docs: https://supabase.com/docs
+- Check `/SETUP_INSTRUCTIONS.md` for database setup

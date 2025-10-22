@@ -4,23 +4,12 @@ import { createClient } from "../../utils/supabase/client";
 import { projectId, publicAnonKey } from "../../utils/supabase/info";
 import { Prospect } from "../../utils/supabase/types";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
-import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Badge } from "../ui/badge";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "../ui/alert-dialog";
 import { Label } from "../ui/label";
-import { Search, Plus, FileText, Calendar, Building2, AlertTriangle, Database, Play, RefreshCw, ArrowLeft, Trash2, ExternalLink, Lightbulb } from "lucide-react";
+import { Search, Plus, FileText, Calendar, Building2, AlertTriangle, Database, Play, RefreshCw, ArrowLeft } from "lucide-react";
 import { toast } from "sonner@2.0.3";
 import { slugify, generateUniqueSlug } from "../../utils/slugify";
 
@@ -30,8 +19,6 @@ export function DashboardPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [prospectToDelete, setProspectToDelete] = useState<Prospect | null>(null);
   const [formData, setFormData] = useState({
     company_name: "",
     owner_name: "",
@@ -84,7 +71,7 @@ export function DashboardPage() {
             duration: 3000
           });
           setTimeout(() => {
-            window.location.href = '/initial-setup';
+            window.location.href = '/#/setup';
           }, 1500);
           setLoading(false);
           return;
@@ -164,43 +151,6 @@ export function DashboardPage() {
     }
   }
 
-  const handleDeleteClick = (prospect: Prospect) => {
-    setProspectToDelete(prospect);
-    setDeleteDialogOpen(true);
-  };
-
-  const handleDeleteConfirm = async () => {
-    if (!prospectToDelete) return;
-
-    try {
-      const response = await fetch(
-        `https://${projectId}.supabase.co/functions/v1/make-server-5e752b5e/prospects/${prospectToDelete.id}`,
-        {
-          method: 'DELETE',
-          headers: {
-            'Authorization': `Bearer ${publicAnonKey}`
-          }
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error('Failed to delete prospect');
-      }
-
-      toast.success(`${prospectToDelete.company_name} deleted successfully`);
-      
-      // Refresh the prospects list
-      fetchProspects();
-      
-      // Close dialog and clear state
-      setDeleteDialogOpen(false);
-      setProspectToDelete(null);
-    } catch (error) {
-      console.error('Error deleting prospect:', error);
-      toast.error('Failed to delete prospect');
-    }
-  };
-
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center">
@@ -214,62 +164,21 @@ export function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
-      {/* Top Navigation Bar */}
-      <div className="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 md:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-              <Building2 className="w-6 h-6 text-blue-600" />
-              <span className="font-semibold">Yak Media - Prospect System</span>
-            </Link>
-            <div className="flex items-center gap-2">
-              <Link to="/audit-guide">
-                <Button variant="ghost" size="sm">
-                  <FileText className="w-4 h-4 mr-2" />
-                  Audit Guide
-                </Button>
-              </Link>
-              <Link to="/manage-users">
-                <Button variant="ghost" size="sm">
-                  Manage Users
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </div>
-
       <div className="max-w-7xl mx-auto p-4 md:p-8">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="mb-2">Prospect Dashboard</h1>
             <p className="text-muted-foreground">
-              Manage prospect audits and generate professional public reports
+              Manage chiropractor audits and generate public reports
             </p>
           </div>
+          <Link to="/">
+            <Button variant="outline">
+              ← Back to Home
+            </Button>
+          </Link>
         </div>
-
-        {/* Quick Start Guide */}
-        {prospects.length === 0 && (
-          <Alert className="mb-6 bg-blue-50 border-blue-200">
-            <Lightbulb className="w-4 h-4 text-blue-600" />
-            <AlertTitle>Welcome to Yak Media Prospecting System</AlertTitle>
-            <AlertDescription>
-              <div className="mt-2 space-y-2 text-sm">
-                <p>Get started by creating your first prospect, then:</p>
-                <ol className="list-decimal list-inside space-y-1 ml-2">
-                  <li>Click "Edit Audit" to fill out the 10-point marketing audit</li>
-                  <li>Click "View Public Report" to see the shareable report</li>
-                  <li>Share the public URL (success.yak.media/company-slug) with prospects</li>
-                </ol>
-                <p className="mt-3">
-                  Need help? Check the <Link to="/audit-guide" className="text-blue-600 hover:underline font-medium">Audit Guide</Link> for detailed instructions on completing audits.
-                </p>
-              </div>
-            </AlertDescription>
-          </Alert>
-        )}
 
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
@@ -289,10 +198,10 @@ export function DashboardPage() {
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-muted-foreground">60-Day Goal</p>
-                  <div className="text-2xl">25 Retainers</div>
+                  <p className="text-sm text-muted-foreground">Goal Progress</p>
+                  <div className="text-2xl">{prospects.length}/100</div>
                 </div>
-                <FileText className="w-8 h-8 text-green-600" />
+                <FileText className="w-8 h-8 text-purple-600" />
               </div>
             </CardContent>
           </Card>
@@ -301,10 +210,10 @@ export function DashboardPage() {
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-muted-foreground">Daily Target</p>
-                  <div className="text-2xl">5-10 Audits</div>
+                  <p className="text-sm text-muted-foreground">Days Remaining</p>
+                  <div className="text-2xl">{Math.max(0, 10 - Math.floor(prospects.length / 10))}</div>
                 </div>
-                <Calendar className="w-8 h-8 text-purple-600" />
+                <Calendar className="w-8 h-8 text-green-600" />
               </div>
             </CardContent>
           </Card>
@@ -330,7 +239,7 @@ export function DashboardPage() {
                   <DialogHeader>
                     <DialogTitle>Create New Prospect</DialogTitle>
                     <DialogDescription>
-                      Add a new business to audit and win as a client
+                      Add a new chiropractor clinic to audit
                     </DialogDescription>
                   </DialogHeader>
                   
@@ -499,28 +408,11 @@ export function DashboardPage() {
                     <p className="text-sm text-muted-foreground">{prospect.owner_name}</p>
                   )}
                   
-                  <div className="space-y-2">
-                    <div className="flex gap-2">
-                      <Link to={`/dashboard/audit/${prospect.id}`} className="flex-1">
-                        <Button className="w-full bg-blue-600 hover:bg-blue-700">
-                          <FileText className="w-4 h-4 mr-2" />
-                          Edit Audit
-                        </Button>
-                      </Link>
-                      <Button
-                        variant="destructive"
-                        size="icon"
-                        onClick={() => handleDeleteClick(prospect)}
-                        title="Delete prospect"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </div>
-                    
-                    <Link to={`/${prospect.company_slug}`} className="block">
-                      <Button variant="outline" className="w-full">
-                        <ExternalLink className="w-4 h-4 mr-2" />
-                        View Public Report
+                  <div className="flex gap-2">
+                    <Link to={`/dashboard/audit/${prospect.id}`} className="flex-1">
+                      <Button className="w-full bg-blue-600 hover:bg-blue-700">
+                        <FileText className="w-4 h-4 mr-2" />
+                        Open Audit
                       </Button>
                     </Link>
                   </div>
@@ -541,33 +433,6 @@ export function DashboardPage() {
           </div>
         )}
       </div>
-
-      {/* Delete Confirmation Dialog */}
-      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This will permanently delete <strong>{prospectToDelete?.company_name}</strong> and all associated data including:
-              <ul className="list-disc list-inside mt-2 space-y-1">
-                <li>Audit responses</li>
-                <li>Screenshots and assets</li>
-                <li>Published report</li>
-              </ul>
-              <p className="mt-3 text-red-600">This action cannot be undone.</p>
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleDeleteConfirm}
-              className="bg-red-600 hover:bg-red-700"
-            >
-              Delete Prospect
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </div>
   );
 }
