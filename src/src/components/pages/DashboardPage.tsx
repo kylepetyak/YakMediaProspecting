@@ -20,7 +20,7 @@ import {
 } from "../ui/alert-dialog";
 import { Label } from "../ui/label";
 import { Search, Plus, FileText, Calendar, Building2, AlertTriangle, Database, Play, RefreshCw, ArrowLeft, Trash2, LogOut } from "lucide-react";
-import { toast } from "sonner@2.0.3";
+import { toast } from "sonner";
 import { slugify, generateUniqueSlug } from "../../utils/slugify";
 import { useAuth } from "../AuthContext";
 
