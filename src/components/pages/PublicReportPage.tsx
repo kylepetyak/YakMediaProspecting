@@ -126,7 +126,7 @@ export function PublicReportPage() {
                 Go to <code className="bg-white px-2 py-1 rounded">/debug</code> to see all available reports and their URLs.
               </p>
               <a 
-                href="/#/debug"
+                href="/debug"
                 className="inline-flex items-center gap-2 text-sm text-blue-600 hover:underline"
               >
                 <Search className="w-4 h-4" />
