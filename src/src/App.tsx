@@ -1,5 +1,5 @@
-import { HashRouter, Routes, Route } from "react-router-dom";
-import { Toaster } from "sonner@2.0.3";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Toaster } from "sonner";
 import { AuthProvider } from "./components/AuthContext";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { HomePage } from "./components/pages/HomePage";

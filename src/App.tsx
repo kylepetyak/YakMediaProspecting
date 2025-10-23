@@ -1,17 +1,17 @@
-import { HashRouter, Routes, Route } from "react-router-dom";
-import { Toaster } from "sonner@2.0.3";
-import { AuthProvider } from "./src/components/AuthContext";
-import { ProtectedRoute } from "./src/components/ProtectedRoute";
-import { HomePage } from "./src/components/pages/HomePage";
-import { LoginPage } from "./src/components/pages/LoginPage";
-import { AuditGuidePage } from "./src/components/pages/AuditGuidePage";
-import { SampleReportPage } from "./src/components/pages/SampleReportPage";
-import { DashboardPage } from "./src/components/pages/DashboardPage";
-import { AuditFormPage } from "./src/components/pages/AuditFormPage";
-import { PublicReportPage } from "./src/components/pages/PublicReportPage";
-import { QuickStartPage } from "./src/components/pages/QuickStartPage";
-import { CreateUserPage } from "./src/components/pages/CreateUserPage";
-import { ManageUsersPage } from "./src/components/pages/ManageUsersPage";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Toaster } from "sonner";
+import { AuthProvider } from "./components/AuthContext";
+import { ProtectedRoute } from "./components/ProtectedRoute";
+import { HomePage } from "./components/pages/HomePage";
+import { LoginPage } from "./components/pages/LoginPage";
+import { AuditGuidePage } from "./components/pages/AuditGuidePage";
+import { SampleReportPage } from "./components/pages/SampleReportPage";
+import { DashboardPage } from "./components/pages/DashboardPage";
+import { AuditFormPage } from "./components/pages/AuditFormPage";
+import { PublicReportPage } from "./components/pages/PublicReportPage";
+import { QuickStartPage } from "./components/pages/QuickStartPage";
+import { CreateUserPage } from "./components/pages/CreateUserPage";
+import { ManageUsersPage } from "./components/pages/ManageUsersPage";
 
 export default function App() {
   console.log('App loaded. Current path:', window.location.pathname);

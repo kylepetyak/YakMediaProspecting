@@ -21,7 +21,7 @@ import {
   Copy,
   Loader2
 } from "lucide-react";
-import { toast } from "sonner@2.0.3";
+import { toast } from "sonner";
 
 const AUDIT_FIELDS = [
   { key: 'website_ux', label: 'Website UX', description: 'Modern design, speed, mobile-friendly, clear CTAs' },
