@@ -86,7 +86,7 @@ export function DashboardPage() {
             duration: 3000
           });
           setTimeout(() => {
-            window.location.href = '/#/setup';
+            window.location.href = '/setup';
           }, 1500);
           setLoading(false);
           return;
