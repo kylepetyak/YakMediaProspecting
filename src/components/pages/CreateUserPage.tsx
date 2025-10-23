@@ -174,7 +174,7 @@ export function CreateUserPage() {
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => copyToClipboard('https://success.yak.media/#/login')}
+                    onClick={() => copyToClipboard('https://success.yak.media/login')}
                   >
                     <Copy className="w-4 h-4" />
                   </Button>
