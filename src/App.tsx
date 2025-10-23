@@ -18,7 +18,7 @@ export default function App() {
   console.log('App loaded. Current hash:', window.location.hash);
   
   return (
-    <HashRouter>
+   <BrowserRouter>
       <AuthProvider>
         <Toaster position="top-right" richColors />
         <Routes>
@@ -45,7 +45,7 @@ export default function App() {
           <Route path="/" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
         </Routes>
       </AuthProvider>
-    </HashRouter>
+    <BrowserRouter>
   );
 }
 
