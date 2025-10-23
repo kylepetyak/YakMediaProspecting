@@ -149,7 +149,7 @@ export function AuditFormPage() {
       }
       
       // Always generate production URL for sharing
-      const publicReportUrl = `https://success.yak.media/#/${data.prospect.company_slug}`;
+      const publicReportUrl = `https://success.yak.media/${data.prospect.company_slug}`;
       setPublicUrl(publicReportUrl);
     } catch (error) {
       console.error('Error fetching prospect:', error);
@@ -278,11 +278,11 @@ export function AuditFormPage() {
       }
       
       // Always generate production URL for sharing
-      const generatedUrl = `https://success.yak.media/#/${prospect.company_slug}`;
+      const generatedUrl = `https://success.yak.media/${prospect.company_slug}`;
       setPublicUrl(generatedUrl);
       
       toast.success('Report published successfully! 🎉', {
-        description: `View at: success.yak.media/#/${prospect.company_slug}`,
+        description: `View at: success.yak.media/${prospect.company_slug}`,
         duration: 8000,
         action: {
           label: 'Open Report',
