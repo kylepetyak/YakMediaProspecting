@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { HashRouter, Routes, Route } from "react-router-dom";
 import { Toaster } from "sonner@2.0.3";
 import { AuthProvider } from "./components/AuthContext";
 import { ProtectedRoute } from "./components/ProtectedRoute";
@@ -15,9 +15,10 @@ import { ManageUsersPage } from "./components/pages/ManageUsersPage";
 
 export default function App() {
   console.log('App loaded. Current path:', window.location.pathname);
+  console.log('App loaded. Current hash:', window.location.hash);
   
   return (
-    <BrowserRouter>
+    <HashRouter>
       <AuthProvider>
         <Toaster position="top-right" richColors />
         <Routes>
@@ -44,7 +45,7 @@ export default function App() {
           <Route path="/" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
         </Routes>
       </AuthProvider>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
 

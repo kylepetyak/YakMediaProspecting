@@ -53,9 +53,13 @@ app.get("/make-server-5e752b5e/prospects/slug/:slug", async (c) => {
       .from('prospects')
       .select('*')
       .eq('company_slug', slug)
-      .single();
+      .maybeSingle();
     
-    if (prospectError) throw prospectError;
+    if (prospectError) {
+      console.error('Error fetching prospect by slug:', prospectError);
+      throw prospectError;
+    }
+    
     if (!prospect) {
       return c.json({ error: 'Prospect not found' }, 404);
     }
@@ -67,13 +71,21 @@ app.get("/make-server-5e752b5e/prospects/slug/:slug", async (c) => {
       .eq('prospect_id', prospect.id)
       .order('completed_at', { ascending: false })
       .limit(1)
-      .single();
+      .maybeSingle();
+    
+    if (auditError) {
+      console.error('Error fetching audit:', auditError);
+    }
     
     // Get assets
     const { data: assets, error: assetsError } = await supabase
       .from('assets')
       .select('*')
       .eq('prospect_id', prospect.id);
+    
+    if (assetsError) {
+      console.error('Error fetching assets:', assetsError);
+    }
     
     return c.json({ 
       prospect, 
@@ -95,9 +107,16 @@ app.get("/make-server-5e752b5e/prospects/:id", async (c) => {
       .from('prospects')
       .select('*')
       .eq('id', id)
-      .single();
+      .maybeSingle();
     
-    if (prospectError) throw prospectError;
+    if (prospectError) {
+      console.error('Error fetching prospect:', prospectError);
+      throw prospectError;
+    }
+    
+    if (!prospect) {
+      return c.json({ error: 'Prospect not found' }, 404);
+    }
     
     // Get latest audit
     const { data: audit } = await supabase
@@ -106,7 +125,7 @@ app.get("/make-server-5e752b5e/prospects/:id", async (c) => {
       .eq('prospect_id', id)
       .order('completed_at', { ascending: false })
       .limit(1)
-      .single();
+      .maybeSingle();
     
     // Get assets
     const { data: assets } = await supabase
@@ -133,7 +152,7 @@ app.get("/make-server-5e752b5e/prospects/check-slug/:slug", async (c) => {
       .from('prospects')
       .select('id')
       .eq('company_slug', slug)
-      .single();
+      .maybeSingle();
     
     return c.json({ exists: !!data });
   } catch (error) {
@@ -192,7 +211,7 @@ app.post("/make-server-5e752b5e/audits", async (c) => {
       .from('audits')
       .select('id')
       .eq('prospect_id', prospect_id)
-      .single();
+      .maybeSingle();
     
     let result;
     if (existing) {
@@ -291,7 +310,7 @@ app.delete("/make-server-5e752b5e/assets/:id", async (c) => {
       .from('assets')
       .select('*')
       .eq('id', id)
-      .single();
+      .maybeSingle();
     
     if (asset) {
       // Extract file path from URL
@@ -326,7 +345,7 @@ app.delete("/make-server-5e752b5e/prospects/:id", async (c) => {
       .from('prospects')
       .select('*')
       .eq('id', id)
-      .single();
+      .maybeSingle();
     
     if (!prospect) {
       return c.json({ error: 'Prospect not found' }, 404);
