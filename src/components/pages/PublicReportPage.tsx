@@ -177,7 +177,7 @@ export function PublicReportPage() {
             </div>
 
             <div className="text-center">
-              <a href="/#/dashboard" className="inline-flex items-center gap-2 text-blue-600 hover:underline">
+              <a href="/dashboard" className="inline-flex items-center gap-2 text-blue-600 hover:underline">
                 Go to Dashboard →
               </a>
             </div>
