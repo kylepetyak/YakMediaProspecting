@@ -1,13 +1,14 @@
+import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 import { Progress } from "./ui/progress";
 import { Separator } from "./ui/separator";
-import { 
-  CheckCircle2, 
-  XCircle, 
-  AlertTriangle, 
-  TrendingUp, 
+import {
+  CheckCircle2,
+  XCircle,
+  AlertTriangle,
+  TrendingUp,
   Calendar,
   MapPin,
   Phone,
@@ -26,6 +27,7 @@ interface AuditPoint {
   score: number;
   notes: string;
   screenshot: string;
+  screenshots?: string[];
 }
 
 interface Opportunity {
@@ -55,6 +57,19 @@ interface AuditReportProps {
 }
 
 export function AuditReport({ data }: AuditReportProps) {
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxImage, setLightboxImage] = useState('');
+
+  const openLightbox = (imageUrl: string) => {
+    setLightboxImage(imageUrl);
+    setLightboxOpen(true);
+  };
+
+  const closeLightbox = () => {
+    setLightboxOpen(false);
+    setLightboxImage('');
+  };
+
   const getStatusIcon = (status: string) => {
     switch (status) {
       case "pass":
@@ -252,8 +267,34 @@ export function AuditReport({ data }: AuditReportProps) {
                       </div>
                     </div>
                     <div className="bg-slate-100 p-3 rounded text-sm mt-2">
-                      <strong>Findings:</strong> {point.notes}
+                      <strong>Findings / Recommendations:</strong> {point.notes}
                     </div>
+                    {point.screenshots && point.screenshots.length > 0 && (
+                      <div className="mt-3">
+                        <div className={`grid gap-3 ${
+                          point.screenshots.length === 1
+                            ? 'grid-cols-1'
+                            : point.screenshots.length === 2
+                            ? 'grid-cols-2'
+                            : 'grid-cols-2 md:grid-cols-3'
+                        }`}>
+                          {point.screenshots.map((screenshot: string, idx: number) => (
+                            <div key={idx} className="relative group">
+                              <img
+                                src={screenshot}
+                                alt={`Screenshot ${idx + 1} for ${point.area}`}
+                                className="w-full rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+                                loading="lazy"
+                                onClick={() => openLightbox(screenshot)}
+                              />
+                              <div className="absolute top-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+                                Click to enlarge
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
                 {index < data.auditPoints.length - 1 && <Separator className="my-2" />}
@@ -292,6 +333,31 @@ export function AuditReport({ data }: AuditReportProps) {
       <div className="text-center mt-8 text-sm text-muted-foreground">
         <p>© 2025 Yak Media • Helping Chiropractors Grow Through Smart Marketing</p>
       </div>
+
+      {/* Image Lightbox */}
+      {lightboxOpen && (
+        <div
+          className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4 animate-in fade-in"
+          onClick={closeLightbox}
+        >
+          <button
+            className="absolute top-4 right-4 text-white hover:text-gray-300 text-4xl font-light leading-none"
+            onClick={closeLightbox}
+            aria-label="Close lightbox"
+          >
+            ×
+          </button>
+          <img
+            src={lightboxImage}
+            alt="Enlarged view"
+            className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          />
+          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-white text-sm bg-black/50 px-4 py-2 rounded-full">
+            Click outside to close
+          </div>
+        </div>
+      )}
     </div>
   );
 }
