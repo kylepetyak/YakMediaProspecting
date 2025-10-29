@@ -26,8 +26,8 @@ interface AuditPoint {
   status: "pass" | "warning" | "fail";
   score: number;
   notes: string;
-  screenshot: string; // Keep for backward compatibility
-  screenshots?: string[]; // Add this line
+  screenshot: string;
+  screenshots?: string[];
 }
 
 interface Opportunity {
@@ -51,12 +51,13 @@ interface AuditData {
   potentialRevenueMin?: number;
   potentialRevenueMax?: number;
 }
- interface AuditReportProps {
+
+interface AuditReportProps {
   data: AuditData;
 }
 
 export function AuditReport({ data }: AuditReportProps) {
-  const [lightboxOpen, setLightboxOpen] = useState(false);  ← RIGHT PLACE!
+  const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxImage, setLightboxImage] = useState('');
 
   const openLightbox = (imageUrl: string) => {
@@ -68,6 +69,7 @@ export function AuditReport({ data }: AuditReportProps) {
     setLightboxOpen(false);
     setLightboxImage('');
   };
+
   const getStatusIcon = (status: string) => {
     switch (status) {
       case "pass":
