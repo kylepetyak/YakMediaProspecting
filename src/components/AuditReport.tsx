@@ -254,6 +254,16 @@ export function AuditReport({ data }: AuditReportProps) {
                     <div className="bg-slate-100 p-3 rounded text-sm mt-2">
                       <strong>Findings:</strong> to <strong>Findings / Recommendations:</strong> {point.notes}
                     </div>
+                    {point.screenshot && (
+                      <div className="mt-3">
+                        <img
+                          src={point.screenshot}
+                          alt={`Screenshot for ${point.area}`}
+                          className="w-full rounded-lg border border-slate-200 shadow-sm"
+                          loading="lazy"
+                        />
+                      </div>
+                    )}
                   </div>
                 </div>
                 {index < data.auditPoints.length - 1 && <Separator className="my-2" />}
