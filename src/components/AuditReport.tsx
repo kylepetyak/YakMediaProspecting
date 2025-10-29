@@ -275,12 +275,14 @@ export function AuditReport({ data }: AuditReportProps) {
           />
           <div className="absolute top-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
             Click to enlarge
-          </div>
-        </div>
-      ))}
-    </div>
-  </div>
-)}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
                 {index < data.auditPoints.length - 1 && <Separator className="my-2" />}
               </div>
             ))}
