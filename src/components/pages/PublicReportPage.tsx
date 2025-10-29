@@ -205,10 +205,15 @@ export function PublicReportPage() {
     const status = (audit as any)[field.key] || 'fail';
     // Use custom score if available, otherwise use default based on status
     const customScore = (audit as any)[`${field.key}_score`];
-    const score = customScore !== undefined && customScore !== null 
-      ? customScore 
+    const score = customScore !== undefined && customScore !== null
+      ? customScore
       : (status === 'pass' ? 100 : status === 'warning' ? 50 : 20);
-    
+
+    // Find the corresponding screenshot asset for this field
+    const screenshotAsset = assets.find(asset =>
+      asset.label === field.key || asset.label === field.label
+    );
+
     return {
       id: index + 1,
       area: field.label,
@@ -216,8 +221,9 @@ export function PublicReportPage() {
       status: status as "pass" | "warning" | "fail",
       score: score,
       notes: (audit as any)[`${field.key}_notes`] || 'No detailed findings provided.',
-      screenshot: ''
+      screenshot: screenshotAsset?.url || ''
     };
+  });
   });
 
   // Parse top opportunities
