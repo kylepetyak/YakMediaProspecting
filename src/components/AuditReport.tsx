@@ -97,7 +97,7 @@ export function AuditReport({ data }: AuditReportProps) {
   };
 
   const getImpactBadge = (impact: string) => {
-    return impact === "High" 
+    return impact === "High"
       ? <Badge className="bg-purple-100 text-purple-800 hover:bg-purple-100">High Impact</Badge>
       : <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">Medium Impact</Badge>;
   };
@@ -119,7 +119,7 @@ export function AuditReport({ data }: AuditReportProps) {
             </div>
           </div>
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
           <div className="flex items-center gap-2">
             <MapPin className="w-4 h-4 text-slate-400" />
@@ -311,7 +311,7 @@ export function AuditReport({ data }: AuditReportProps) {
             <TrendingUp className="w-12 h-12 mx-auto mb-4 text-green-400" />
             <h2 className="mb-3 text-white">Ready to Transform Your Marketing?</h2>
             <p className="mb-6 text-slate-300">
-              Yak Media specializes in helping chiropractors like you fill your schedule with qualified new patients. 
+              Yak Media specializes in helping chiropractors like you fill your schedule with qualified new patients.
               Let's discuss how we can implement these improvements and grow your practice.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
