@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
@@ -54,6 +55,19 @@ interface AuditData {
 interface AuditReportProps {
   data: AuditData;
 }
+
+ const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxImage, setLightboxImage] = useState('');
+
+  const openLightbox = (imageUrl: string) => {
+    setLightboxImage(imageUrl);
+    setLightboxOpen(true);
+  };
+
+  const closeLightbox = () => {
+    setLightboxOpen(false);
+    setLightboxImage('');
+  };
 
 export function AuditReport({ data }: AuditReportProps) {
   const getStatusIcon = (status: string) => {
@@ -271,7 +285,7 @@ export function AuditReport({ data }: AuditReportProps) {
             alt={`Screenshot ${idx + 1} for ${point.area}`}
             className="w-full rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
             loading="lazy"
-            onClick={() => window.open(screenshot, '_blank')}
+            onClick={() => openLightbox(screenshot)}
           />
           <div className="absolute top-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
             Click to enlarge
@@ -319,6 +333,31 @@ export function AuditReport({ data }: AuditReportProps) {
       <div className="text-center mt-8 text-sm text-muted-foreground">
         <p>© 2025 Yak Media • Helping Chiropractors Grow Through Smart Marketing</p>
       </div>
+        {/* Image Lightbox */}
+      {lightboxOpen && (
+        <div 
+          className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4 animate-in fade-in"
+          onClick={closeLightbox}
+        >
+          <button
+            className="absolute top-4 right-4 text-white hover:text-gray-300 text-4xl font-light leading-none"
+            onClick={closeLightbox}
+            aria-label="Close lightbox"
+          >
+            ×
+          </button>
+          <img
+            src={lightboxImage}
+            alt="Enlarged view"
+            className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          />
+          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-white text-sm bg-black/50 px-4 py-2 rounded-full">
+            Click outside to close
+          </div>
+        </div>
+      )}
+    </div>
     </div>
   );
 }
