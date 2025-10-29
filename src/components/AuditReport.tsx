@@ -453,12 +453,12 @@ export function AuditReport({ data }: AuditReportProps) {
           <img
             src={lightboxImages[currentImageIndex]}
             alt={`Screenshot ${currentImageIndex + 1} of ${lightboxImages.length}`}
-            className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl"
+            className="max-w-full max-h-[80vh] object-contain rounded-lg shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           />
 
           {/* Instructions */}
-          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-white text-sm bg-black/50 px-4 py-2 rounded-full">
+          <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 text-white text-xs bg-black/50 px-3 py-1.5 rounded-full">
             {lightboxImages.length > 1 ? (
               <span className="hidden md:inline">Use arrow keys or swipe to navigate • Press ESC or click outside to close</span>
             ) : (
