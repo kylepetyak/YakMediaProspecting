@@ -52,11 +52,13 @@ interface AuditData {
   potentialRevenueMax?: number;
 }
 
-interface AuditReportProps {
+export function AuditReport({ data }: AuditReportProps) {
+  interface AuditReportProps {
   data: AuditData;
 }
 
- const [lightboxOpen, setLightboxOpen] = useState(false);
+export function AuditReport({ data }: AuditReportProps) {
+  const [lightboxOpen, setLightboxOpen] = useState(false);  ← RIGHT PLACE!
   const [lightboxImage, setLightboxImage] = useState('');
 
   const openLightbox = (imageUrl: string) => {
@@ -68,8 +70,6 @@ interface AuditReportProps {
     setLightboxOpen(false);
     setLightboxImage('');
   };
-
-export function AuditReport({ data }: AuditReportProps) {
   const getStatusIcon = (status: string) => {
     switch (status) {
       case "pass":
