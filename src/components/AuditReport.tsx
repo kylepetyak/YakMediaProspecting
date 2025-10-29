@@ -252,7 +252,7 @@ export function AuditReport({ data }: AuditReportProps) {
                       </div>
                     </div>
                     <div className="bg-slate-100 p-3 rounded text-sm mt-2">
-                      <strong>Findings:</strong> {point.notes}
+                      <strong>Findings:</strong> to <strong>Findings / Recommendations:</strong> {point.notes}
                     </div>
                   </div>
                 </div>
