@@ -25,7 +25,8 @@ interface AuditPoint {
   status: "pass" | "warning" | "fail";
   score: number;
   notes: string;
-  screenshot: string;
+  screenshot: string; // Keep for backward compatibility
+  screenshots?: string[]; // Add this line
 }
 
 interface Opportunity {
@@ -254,18 +255,32 @@ export function AuditReport({ data }: AuditReportProps) {
                     <div className="bg-slate-100 p-3 rounded text-sm mt-2">
                       <strong>Findings / Recommendations:</strong> {point.notes}
                     </div>
-                    {point.screenshot && (
-                      <div className="mt-3">
-                        <img
-                          src={point.screenshot}
-                          alt={`Screenshot for ${point.area}`}
-                          className="w-full rounded-lg border border-slate-200 shadow-sm"
-                          loading="lazy"
-                        />
-                      </div>
-                    )}
-                  </div>
-                </div>
+                    {point.screenshots && point.screenshots.length > 0 && (
+  <div className="mt-3">
+    <div className={`grid gap-3 ${
+      point.screenshots.length === 1 
+        ? 'grid-cols-1' 
+        : point.screenshots.length === 2 
+        ? 'grid-cols-2' 
+        : 'grid-cols-2 md:grid-cols-3'
+    }`}>
+      {point.screenshots.map((screenshot: string, idx: number) => (
+        <div key={idx} className="relative group">
+          <img
+            src={screenshot}
+            alt={`Screenshot ${idx + 1} for ${point.area}`}
+            className="w-full rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+            loading="lazy"
+            onClick={() => window.open(screenshot, '_blank')}
+          />
+          <div className="absolute top-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+            Click to enlarge
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+)}
                 {index < data.auditPoints.length - 1 && <Separator className="my-2" />}
               </div>
             ))}
