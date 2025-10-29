@@ -224,8 +224,7 @@ export function PublicReportPage() {
       screenshot: screenshotAsset?.url || ''
     };
   });
-  });
-
+  
   // Parse top opportunities
   const opportunitiesText = prospect.top_opportunities || '';
   const opportunitiesList = opportunitiesText
