@@ -209,10 +209,11 @@ export function PublicReportPage() {
       ? customScore
       : (status === 'pass' ? 100 : status === 'warning' ? 50 : 20);
 
-    // Find the corresponding screenshot asset for this field
-    const screenshotAsset = assets.find(asset =>
-      asset.label === field.key || asset.label === field.label
-    );
+    // Find ALL corresponding screenshot assets for this field
+const screenshotAssets = assets.filter(asset =>
+  asset.label === field.key || asset.label === field.label
+);
+const screenshotUrls = screenshotAssets.map(asset => asset.url);
 
     return {
       id: index + 1,
@@ -221,7 +222,8 @@ export function PublicReportPage() {
       status: status as "pass" | "warning" | "fail",
       score: score,
       notes: (audit as any)[`${field.key}_notes`] || 'No detailed findings provided.',
-      screenshot: screenshotAsset?.url || ''
+      screenshot: screenshotUrls.length > 0 ? screenshotUrls[0] : '', // For backward compatibility
+screenshots: screenshotUrls // Array of all screenshots
     };
   });
   
