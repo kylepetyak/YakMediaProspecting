@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
@@ -15,7 +15,10 @@ import {
   Globe,
   BarChart3,
   Target,
-  Zap
+  Zap,
+  ChevronLeft,
+  ChevronRight,
+  X
 } from "lucide-react";
 import { ScoreChart } from "./ScoreChart";
 
@@ -58,16 +61,75 @@ interface AuditReportProps {
 
 export function AuditReport({ data }: AuditReportProps) {
   const [lightboxOpen, setLightboxOpen] = useState(false);
-  const [lightboxImage, setLightboxImage] = useState('');
+  const [lightboxImages, setLightboxImages] = useState<string[]>([]);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [touchStart, setTouchStart] = useState(0);
+  const [touchEnd, setTouchEnd] = useState(0);
 
-  const openLightbox = (imageUrl: string) => {
-    setLightboxImage(imageUrl);
+  const openLightbox = (imageUrl: string, allImages: string[]) => {
+    const index = allImages.indexOf(imageUrl);
+    setLightboxImages(allImages);
+    setCurrentImageIndex(index >= 0 ? index : 0);
     setLightboxOpen(true);
   };
 
   const closeLightbox = () => {
     setLightboxOpen(false);
-    setLightboxImage('');
+    setLightboxImages([]);
+    setCurrentImageIndex(0);
+  };
+
+  const nextImage = () => {
+    if (currentImageIndex < lightboxImages.length - 1) {
+      setCurrentImageIndex(currentImageIndex + 1);
+    }
+  };
+
+  const previousImage = () => {
+    if (currentImageIndex > 0) {
+      setCurrentImageIndex(currentImageIndex - 1);
+    }
+  };
+
+  // Keyboard navigation
+  useEffect(() => {
+    if (!lightboxOpen) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') closeLightbox();
+      if (e.key === 'ArrowRight') nextImage();
+      if (e.key === 'ArrowLeft') previousImage();
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [lightboxOpen, currentImageIndex, lightboxImages]);
+
+  // Touch/swipe handling for mobile
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > 50;
+    const isRightSwipe = distance < -50;
+
+    if (isLeftSwipe) {
+      nextImage();
+    }
+    if (isRightSwipe) {
+      previousImage();
+    }
+
+    setTouchStart(0);
+    setTouchEnd(0);
   };
 
   const getStatusIcon = (status: string) => {
@@ -285,10 +347,10 @@ export function AuditReport({ data }: AuditReportProps) {
                                 alt={`Screenshot ${idx + 1} for ${point.area}`}
                                 className="w-full rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer"
                                 loading="lazy"
-                                onClick={() => openLightbox(screenshot)}
+                                onClick={() => openLightbox(screenshot, point.screenshots || [])}
                               />
                               <div className="absolute top-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
-                                Click to enlarge
+                                Click to view
                               </div>
                             </div>
                           ))}
@@ -337,24 +399,72 @@ export function AuditReport({ data }: AuditReportProps) {
       {/* Image Lightbox */}
       {lightboxOpen && (
         <div
-          className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4 animate-in fade-in"
+          className="fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-4 animate-in fade-in"
           onClick={closeLightbox}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
         >
+          {/* Close button */}
           <button
-            className="absolute top-4 right-4 text-white hover:text-gray-300 text-4xl font-light leading-none"
+            className="absolute top-4 right-4 z-10 bg-black/50 hover:bg-black/70 text-white rounded-full p-2 transition-colors"
             onClick={closeLightbox}
             aria-label="Close lightbox"
           >
-            ×
+            <X className="w-6 h-6" />
           </button>
+
+          {/* Image counter */}
+          {lightboxImages.length > 1 && (
+            <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-10 bg-black/50 text-white px-4 py-2 rounded-full text-sm">
+              {currentImageIndex + 1} / {lightboxImages.length}
+            </div>
+          )}
+
+          {/* Previous button */}
+          {lightboxImages.length > 1 && currentImageIndex > 0 && (
+            <button
+              className="absolute left-4 z-10 bg-black/50 hover:bg-black/70 text-white rounded-full p-3 transition-colors"
+              onClick={(e) => {
+                e.stopPropagation();
+                previousImage();
+              }}
+              aria-label="Previous image"
+            >
+              <ChevronLeft className="w-8 h-8" />
+            </button>
+          )}
+
+          {/* Next button */}
+          {lightboxImages.length > 1 && currentImageIndex < lightboxImages.length - 1 && (
+            <button
+              className="absolute right-4 z-10 bg-black/50 hover:bg-black/70 text-white rounded-full p-3 transition-colors"
+              onClick={(e) => {
+                e.stopPropagation();
+                nextImage();
+              }}
+              aria-label="Next image"
+            >
+              <ChevronRight className="w-8 h-8" />
+            </button>
+          )}
+
+          {/* Image */}
           <img
-            src={lightboxImage}
-            alt="Enlarged view"
+            src={lightboxImages[currentImageIndex]}
+            alt={`Screenshot ${currentImageIndex + 1} of ${lightboxImages.length}`}
             className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           />
+
+          {/* Instructions */}
           <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-white text-sm bg-black/50 px-4 py-2 rounded-full">
-            Click outside to close
+            {lightboxImages.length > 1 ? (
+              <span className="hidden md:inline">Use arrow keys or swipe to navigate • Press ESC or click outside to close</span>
+            ) : (
+              <span className="hidden md:inline">Press ESC or click outside to close</span>
+            )}
+            <span className="md:hidden">Swipe to navigate • Tap outside to close</span>
           </div>
         </div>
       )}
