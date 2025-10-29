@@ -358,6 +358,5 @@ export function AuditReport({ data }: AuditReportProps) {
         </div>
       )}
     </div>
-    </div>
   );
 }
