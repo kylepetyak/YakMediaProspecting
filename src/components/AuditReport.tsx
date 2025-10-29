@@ -51,9 +51,7 @@ interface AuditData {
   potentialRevenueMin?: number;
   potentialRevenueMax?: number;
 }
-
-export function AuditReport({ data }: AuditReportProps) {
-  interface AuditReportProps {
+ interface AuditReportProps {
   data: AuditData;
 }
 
