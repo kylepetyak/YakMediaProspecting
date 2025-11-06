@@ -132,6 +132,21 @@ export function AuditReport({ data }: AuditReportProps) {
     setTouchEnd(0);
   };
 
+  // Load calendar booking script
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://links.yak.media/js/form_embed.js';
+    script.type = 'text/javascript';
+    script.async = true;
+    document.body.appendChild(script);
+
+    return () => {
+      if (document.body.contains(script)) {
+        document.body.removeChild(script);
+      }
+    };
+  }, []);
+
   const getStatusIcon = (status: string) => {
     switch (status) {
       case "pass":
@@ -369,22 +384,30 @@ export function AuditReport({ data }: AuditReportProps) {
       {/* CTA Section */}
       <Card className="border-slate-900 bg-gradient-to-br from-slate-900 to-slate-800 text-white shadow-xl">
         <CardContent className="p-8">
-          <div className="text-center max-w-2xl mx-auto">
+          <div className="text-center max-w-3xl mx-auto">
             <TrendingUp className="w-12 h-12 mx-auto mb-4 text-green-400" />
             <h2 className="mb-3 text-white">Ready to Transform Your Marketing?</h2>
             <p className="mb-6 text-slate-300">
               Yak Media specializes in helping chiropractors like you fill your schedule with qualified new patients.
               Let's discuss how we can implement these improvements and grow your practice.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="bg-green-600 hover:bg-green-700 text-white">
-                Schedule Your Free Strategy Call
-              </Button>
-              <Button size="lg" variant="outline" className="bg-white/10 border-white/20 text-white hover:bg-white/20">
-                Watch Your Custom Video Audit
-              </Button>
+
+            {/* Calendar Booking Widget */}
+            <div className="bg-white rounded-lg p-4 mb-6">
+              <iframe
+                src="https://links.yak.media/widget/booking/hh3d0Z7E0vSuR4xCXiKI"
+                style={{ width: '100%', border: 'none', overflow: 'hidden' }}
+                scrolling="no"
+                id="hh3d0Z7E0vSuR4xCXiKI_1762457874837"
+                className="min-h-[600px]"
+              />
             </div>
-            <p className="text-xs text-slate-400 mt-6">
+
+            <Button size="lg" variant="outline" className="bg-white/10 border-white/20 text-white hover:bg-white/20 mb-4">
+              Watch Your Custom Video Audit
+            </Button>
+
+            <p className="text-xs text-slate-400 mt-4">
               This audit was personally prepared for {data.businessName} by Kyle at Yak Media
             </p>
           </div>
